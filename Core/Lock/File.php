@@ -31,10 +31,9 @@ class Core_Lock_File extends Core_Lock_Lock implements Core_IPlugin
 
     public function setup()
     {
-        if (substr($this->path, -1, 1) != '/')
-            $this->path .= '/';
+        $path = rtrim($this->path, '/') . '/';
 
-        $this->filename = $this->path . $this->daemon_name . '.' . Core_Lock_Lock::$LOCK_UNIQUE_ID;
+        $this->filename = $path . $this->daemon_name . '.' . self::$LOCK_UNIQUE_ID;
     }
 
     public function teardown()
@@ -45,7 +44,7 @@ class Core_Lock_File extends Core_Lock_Lock implements Core_IPlugin
     }
 
     public function check_environment(array $errors = array())
-    {
+    {   
         if (!is_writable($this->path))
             $errors[] = 'Lock File Path ' . $this->path . ' Not Writable.';
 

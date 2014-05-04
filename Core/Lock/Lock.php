@@ -55,7 +55,6 @@ abstract class Core_Lock_Lock implements Core_IPlugin
      * Read the lock from whatever shared medium it's written to.
      * Should return false if the lock was set by the current process (use $this->pid).
      * Should return false if the process that wrote the lock is no longer running.
-     * Should return false if the lock has exceeded it's TTL+LOCK_TTL_PADDING_SECONDS
      * If a lock is valid, it should return the PID that set it.
      * @abstract
      * @return int|falsey

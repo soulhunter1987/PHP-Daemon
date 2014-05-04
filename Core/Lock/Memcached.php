@@ -28,7 +28,7 @@ class Core_Lock_Memcached extends Core_Lock_Lock implements Core_IPlugin
 		// the memcache server doesn't crash the daemon. It'll retry every 1/10 of a second until it hits its limit. We're giving it a 1 second limit.
 		$this->memcache->auto_retry(1);
 		
-		if ($this->memcache->connect_all($this->memcache_servers) === false)
+		if (!$this->memcache->connect_all($this->memcache_servers))
 			throw new Exception('Core_Lock_Memcached::setup failed: Memcached Connection Failed');
 	}
 	
@@ -36,13 +36,11 @@ class Core_Lock_Memcached extends Core_Lock_Lock implements Core_IPlugin
 	{
 		// If this PID set this lock, release it
 		if ($this->get() == $this->pid)
-			$this->memcache->delete(Core_Lock_Lock::$LOCK_UNIQUE_ID);
+			$this->memcache->delete(self::$LOCK_UNIQUE_ID);
 	}
 	
-	public function check_environment(Array $errors = array())
+	public function check_environment(array $errors = array())
 	{
-		$errors = array();
-		
 		if (!(is_array($this->memcache_servers) && count($this->memcache_servers)))
 			$errors[] = 'Memcache Plugin: Memcache Servers Are Not Set';
 		
@@ -57,12 +55,12 @@ class Core_Lock_Memcached extends Core_Lock_Lock implements Core_IPlugin
 	
 	protected function set()
 	{
-		$this->memcache->set(Core_Lock_Lock::$LOCK_UNIQUE_ID, $this->pid);
+		$this->memcache->set(self::$LOCK_UNIQUE_ID, $this->pid);
 	}
 	
 	protected function get()
 	{
-		$lock = $this->memcache->get(Core_Lock_Lock::$LOCK_UNIQUE_ID);
+		$lock = $this->memcache->get(self::$LOCK_UNIQUE_ID);
 		
 		return $lock;
 	}
